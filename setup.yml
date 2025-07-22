@@ -1,0 +1,37 @@
+---
+- name: Configurar servidores Ubuntu
+  hosts: ubuntu_servers
+  become: true
+  tasks:
+    - name: Actualizar paquetes APT
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Crear usuario itla
+      user:
+        name: itla
+        state: present
+        groups: sudo
+        shell: /bin/bash
+
+    - name: Crear carpeta "app"
+      file:
+        path: /home/itla/app
+        state: directory
+        owner: itla
+        group: itla
+        mode: '0755'
+
+    - name: Crear archivo hola.txt
+      copy:
+        content: "Hola desde Ansible!"
+        dest: /home/itla/app/hola.txt
+        owner: itla
+        group: itla
+        mode: '0644'
+
+    - name: Instalar cowsay y htop
+      apt:
+        name: ['cowsay', 'htop']
+        state: present
